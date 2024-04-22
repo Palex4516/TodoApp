@@ -1,0 +1,82 @@
+﻿@page "/todo"
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
+@* @using System.Net.Http *@
+@* @using System.Net.Http.Json *@
+@* @inject HttpClient Http *@
+@rendermode InteractiveServer
+
+<h3>Todo (@todos.Count(todo => !todo.IsComplete))</h3>
+
+<ui>
+    @foreach (var todo in todos)
+    {
+        <li>
+            @todo.Name
+            @*   <input type="checkbox" @bind="todo.IsComplete" />
+        <input @bind="todo.Name" /> *@
+        </li>
+    }
+</ui>
+
+@* <input @bind="newTodo" /> *@
+@* <button @onclick="AddTodo">Add todo</button> *@
+
+
+@code {
+    private IEnumerable<TodoItem>? todos = [];
+    string newTodo = "";
+    private bool getBranchesError;
+    private bool shouldRender;
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7135/api/TodoItems");
+
+        var client = ClientFactory.CreateClient();
+
+        // todos = await client.GetFromJsonAsync<TodoItem[]>("https:localhost:7135/api/TodoItems");
+
+        var response = await client.SendAsync(request);
+
+        Console.WriteLine(response.Content.ToString());
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<IEnumerable<TodoItem>>();
+            if (content != null)
+            {
+                todos = content;
+                foreach (TodoItem todo in todos)
+                {
+                    Console.WriteLine($"Id: {todo.Id}, Name: {todo.Name}");
+                }
+            }
+            else
+            {
+                getBranchesError = true;
+                Console.WriteLine("HJÄLP!");
+            }
+        }
+        else
+        {
+            getBranchesError = true;
+            Console.WriteLine("HJÄLP!");
+        }
+
+        shouldRender = true;
+    }
+
+
+    // void AddTodo()
+    // {
+    //     if (!string.IsNullOrWhiteSpace(newTodo))
+    //     {
+    //         todos.Add(new TodoItem { Name = newTodo });
+    //         newTodo = string.Empty;
+    //     }
+    // }
+}

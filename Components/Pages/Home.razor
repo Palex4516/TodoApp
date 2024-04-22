@@ -1,0 +1,24 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<br />
+
+<button @onclick="() => showModal=true">Visa Modal</button>
+
+
+<Modal Title=" Din mamma!" Show="@showModal"
+       OnConfirm="() => showModal = false"
+       OnCancel="() => showModal = false">
+    <p>
+        Haha! Där fick du!
+    </p>
+</Modal>
+
+@code {
+    bool showModal = true;
+}
