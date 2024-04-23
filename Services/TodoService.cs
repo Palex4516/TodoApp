@@ -13,7 +13,7 @@ namespace ToDoList.Services
             if (todoList != null)
             {
                 todoList.Sort((x, y) => x.Id < y.Id ? -1 : 1);
-                todoList.ForEach(x => Console.WriteLine($"Id: {x.Id}, Name: {x.Name}"));
+                todoList.ForEach(x => Console.WriteLine($"Id: {x.Id}, Name: {x.Name}, IsComplete: {x.IsComplete}"));
                 return todoList;
             }
             else
@@ -45,6 +45,14 @@ namespace ToDoList.Services
         {
             var svar = await client.DeleteAsync(_base_url + "/" + id);
             svar.EnsureSuccessStatusCode();
+            Console.WriteLine($"Deleted TodoItem with id={id}");
+        }
+
+        public async Task UpdateTodo(TodoItem todoItem)
+        {
+            var svar = await client.PutAsJsonAsync(_base_url + "/" + todoItem.Id, todoItem);
+            svar.EnsureSuccessStatusCode();
+            Console.WriteLine($"Updated TodoItem, Id: {todoItem.Id}, Name: {todoItem.Name}, IsComplete: {todoItem.IsComplete}");
         }
     }
 }

@@ -6,17 +6,17 @@
 <h3>Todos</h3>
 
 <ui>
-    @foreach (var todo in todos)
+    @foreach (var todo in todoList)
     {
         <li>
             <input type="checkbox" @bind="todo.IsComplete" />
             <input @bind="todo.Name" />
             @* @todo.Name *@
-            <button>Update</button>
+            <button @onclick="() => UpdateTodo(todo)">Update</button>
             <button @onclick="() => RemoveTodo(todo.Id)">Remove</button>
         </li>
     }
-    @if (todos.Count == 0)
+    @if (todoList.Count == 0)
     {
         <h3>Inga todos hittades</h3>
     }
@@ -29,7 +29,7 @@
 
 
 @code {
-    private List<TodoItem> todos = [];
+    private List<TodoItem> todoList = [];
     string newTodo = "";
 
     protected override async Task OnInitializedAsync()
@@ -39,9 +39,8 @@
 
     async Task RefreshTodoList()
     {
-        todos = await TodoService.GetAllTodos();
-        Console.WriteLine($"todos.Count : {todos.Count}");
-        // todos.ForEach(x => Console.WriteLine(x.Name));
+        todoList = await TodoService.GetAllTodos();
+        Console.WriteLine($"todoList.Count = {todoList.Count}");
     }
 
     async void AddTodo()
@@ -49,7 +48,7 @@
         if (!string.IsNullOrWhiteSpace(newTodo))
         {
             TodoItem createdTodo = await TodoService.CreateTodo(newTodo);
-            todos.Add(createdTodo);
+            todoList.Add(createdTodo);
             newTodo = string.Empty;
             StateHasChanged();
         }
@@ -58,7 +57,12 @@
     async void RemoveTodo(long id)
     {
         await TodoService.DeleteTodo(id);
-        todos.RemoveAll(todo => todo.Id == id);
+        todoList.RemoveAll(todo => todo.Id == id);
         StateHasChanged();
+    }
+
+    async void UpdateTodo(TodoItem todoItem)
+    {
+        await TodoService.UpdateTodo(todoItem);
     }
 }
