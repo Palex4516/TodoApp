@@ -1,82 +1,64 @@
 ﻿@page "/todo"
-@using System.Text.Json
-@using System.Text.Json.Serialization
-@inject IHttpClientFactory ClientFactory
-@* @using System.Net.Http *@
-@* @using System.Net.Http.Json *@
-@* @inject HttpClient Http *@
+@using ToDoList.Services
+@inject TodoService TodoService
 @rendermode InteractiveServer
 
-<h3>Todo (@todos.Count(todo => !todo.IsComplete))</h3>
+<h3>Todos</h3>
 
 <ui>
     @foreach (var todo in todos)
     {
         <li>
-            @todo.Name
-            @*   <input type="checkbox" @bind="todo.IsComplete" />
-        <input @bind="todo.Name" /> *@
+            <input type="checkbox" @bind="todo.IsComplete" />
+            <input @bind="todo.Name" />
+            @* @todo.Name *@
+            <button>Update</button>
+            <button @onclick="() => RemoveTodo(todo.Id)">Remove</button>
         </li>
+    }
+    @if (todos.Count == 0)
+    {
+        <h3>Inga todos hittades</h3>
     }
 </ui>
 
-@* <input @bind="newTodo" /> *@
-@* <button @onclick="AddTodo">Add todo</button> *@
+<button @onclick="RefreshTodoList">Refresh</button>
+
+<input @bind="newTodo" />
+<button @onclick="AddTodo">Add todo</button>
 
 
 @code {
-    private IEnumerable<TodoItem>? todos = [];
+    private List<TodoItem> todos = [];
     string newTodo = "";
-    private bool getBranchesError;
-    private bool shouldRender;
-
-    protected override bool ShouldRender() => shouldRender;
 
     protected override async Task OnInitializedAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7135/api/TodoItems");
-
-        var client = ClientFactory.CreateClient();
-
-        // todos = await client.GetFromJsonAsync<TodoItem[]>("https:localhost:7135/api/TodoItems");
-
-        var response = await client.SendAsync(request);
-
-        Console.WriteLine(response.Content.ToString());
-
-        if (response.IsSuccessStatusCode)
-        {
-            var content = await response.Content.ReadFromJsonAsync<IEnumerable<TodoItem>>();
-            if (content != null)
-            {
-                todos = content;
-                foreach (TodoItem todo in todos)
-                {
-                    Console.WriteLine($"Id: {todo.Id}, Name: {todo.Name}");
-                }
-            }
-            else
-            {
-                getBranchesError = true;
-                Console.WriteLine("HJÄLP!");
-            }
-        }
-        else
-        {
-            getBranchesError = true;
-            Console.WriteLine("HJÄLP!");
-        }
-
-        shouldRender = true;
+        await RefreshTodoList();
     }
 
+    async Task RefreshTodoList()
+    {
+        todos = await TodoService.GetAllTodos();
+        Console.WriteLine($"todos.Count : {todos.Count}");
+        // todos.ForEach(x => Console.WriteLine(x.Name));
+    }
 
-    // void AddTodo()
-    // {
-    //     if (!string.IsNullOrWhiteSpace(newTodo))
-    //     {
-    //         todos.Add(new TodoItem { Name = newTodo });
-    //         newTodo = string.Empty;
-    //     }
-    // }
+    async void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            TodoItem createdTodo = await TodoService.CreateTodo(newTodo);
+            todos.Add(createdTodo);
+            newTodo = string.Empty;
+            StateHasChanged();
+        }
+    }
+
+    async void RemoveTodo(long id)
+    {
+        await TodoService.DeleteTodo(id);
+        todos.RemoveAll(todo => todo.Id == id);
+        StateHasChanged();
+    }
 }
