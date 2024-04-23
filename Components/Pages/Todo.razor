@@ -1,5 +1,4 @@
 ﻿@page "/todo"
-@using ToDoList.Services
 @inject TodoService TodoService
 @rendermode InteractiveServer
 
@@ -31,7 +30,7 @@ else
 <Modal @ref="modal" Title="You sure you want to delete?">
     <BodyTemplate>
         <p>
-            You sure you want to delete "@todoToRemove?.Name"?
+            You sure you want to delete "@todoToRemove!.Name"?
             <br />
             This action can not be undone.
         </p>
@@ -45,9 +44,9 @@ else
 
 @code {
     private List<TodoItem> todoList = [];
-    string newTodo = "";
-    TodoItem? todoToRemove = null;
-    private Modal modal;
+    private string newTodo = "";
+    private TodoItem? todoToRemove = null;
+    private Modal modal = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -90,12 +89,12 @@ else
     private async Task ShowModal(TodoItem todoItem)
     {
         todoToRemove = todoItem;
-        await modal?.ShowAsync();
+        await modal.ShowAsync();
     }
 
     private async Task HideModal()
     {
-        await modal?.HideAsync();
+        await modal.HideAsync();
         todoToRemove = null;
     }
 }
