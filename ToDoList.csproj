@@ -10,4 +10,8 @@
 		<Content Remove="Components\Pages\Component.razor" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Blazor.Bootstrap" Version="2.2.1" />
+	</ItemGroup>
+
 </Project>

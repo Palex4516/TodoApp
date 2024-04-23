@@ -14,7 +14,7 @@
                 <input @bind="todo.Name" />
                 <input type="checkbox" @bind="todo.IsComplete" />
                 <button @onclick="() => UpdateTodo(todo)">Save</button>
-                <button @onclick="() => RemoveTodo(todo.Id)">Remove</button>
+                <button @onclick="() => ShowModal(todo)">Remove</button>
             </li>
         }
     </ul>
@@ -24,29 +24,43 @@ else
     <h4>Inga todos hittades</h4>
 }
 
-
 <button @onclick="RefreshTodoList">Refresh</button>
-
 <input @bind="newTodo" />
 <button @onclick="AddTodo">Add todo</button>
+
+<Modal @ref="modal" Title="You sure you want to delete?">
+    <BodyTemplate>
+        <p>
+            You sure you want to delete "@todoToRemove?.Name"?
+            <br />
+            This action can not be undone.
+        </p>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="() => HideModal()">Close</Button>
+        <Button Color="ButtonColor.Danger" @onclick="() => RemoveTodo()">Delete</Button>
+    </FooterTemplate>
+</Modal>
 
 
 @code {
     private List<TodoItem> todoList = [];
     string newTodo = "";
+    TodoItem? todoToRemove = null;
+    private Modal modal;
 
     protected override async Task OnInitializedAsync()
     {
         await RefreshTodoList();
     }
 
-    async Task RefreshTodoList()
+    private async Task RefreshTodoList()
     {
         todoList = await TodoService.GetAllTodos();
         Console.WriteLine($"todoList.Count = {todoList.Count}");
     }
 
-    async void AddTodo()
+    private async Task AddTodo()
     {
         if (!string.IsNullOrWhiteSpace(newTodo))
         {
@@ -57,15 +71,31 @@ else
         }
     }
 
-    async void RemoveTodo(long id)
+    private async Task RemoveTodo()
     {
-        await TodoService.DeleteTodo(id);
-        todoList.RemoveAll(todo => todo.Id == id);
+        if (todoToRemove != null)
+        {
+            await TodoService.DeleteTodo(todoToRemove.Id);
+            todoList.RemoveAll(todo => todo.Id == todoToRemove.Id);
+        }
+        await HideModal();
         StateHasChanged();
     }
 
-    async void UpdateTodo(TodoItem todoItem)
+    private async Task UpdateTodo(TodoItem todoItem)
     {
         await TodoService.UpdateTodo(todoItem);
+    }
+
+    private async Task ShowModal(TodoItem todoItem)
+    {
+        todoToRemove = todoItem;
+        await modal?.ShowAsync();
+    }
+
+    private async Task HideModal()
+    {
+        await modal?.HideAsync();
+        todoToRemove = null;
     }
 }
