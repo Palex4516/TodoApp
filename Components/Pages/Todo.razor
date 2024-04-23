@@ -3,23 +3,27 @@
 @inject TodoService TodoService
 @rendermode InteractiveServer
 
-<h3>Todo List</h3>
+<h1>Todo List</h1>
 
-<ul>
-    @foreach (var todo in todoList)
-    {
-        <li>
-            <input @bind="todo.Name" />
-            <input type="checkbox" @bind="todo.IsComplete" />
-            <button @onclick="() => UpdateTodo(todo)">Update</button>
-            <button @onclick="() => RemoveTodo(todo.Id)">Remove</button>
-        </li>
-    }
-    @if (todoList.Count == 0)
-    {
-        <h3>Inga todos hittades</h3>
-    }
-</ul>
+@if (todoList.Count > 0)
+{
+    <ul>
+        @foreach (var todo in todoList)
+        {
+            <li>
+                <input @bind="todo.Name" />
+                <input type="checkbox" @bind="todo.IsComplete" />
+                <button @onclick="() => UpdateTodo(todo)">Save</button>
+                <button @onclick="() => RemoveTodo(todo.Id)">Remove</button>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <h4>Inga todos hittades</h4>
+}
+
 
 <button @onclick="RefreshTodoList">Refresh</button>
 
