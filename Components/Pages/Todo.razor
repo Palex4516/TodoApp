@@ -1,4 +1,5 @@
 ﻿@page "/todo"
+@using Gen.TodoApi
 @inject TodoService TodoService
 @rendermode InteractiveServer
 
@@ -43,9 +44,9 @@ else
 
 
 @code {
-    private List<TodoItem> todoList = [];
+    private List<TodoItemDTO> todoList = [];
     private string newTodo = "";
-    private TodoItem? todoToRemove = null;
+    private TodoItemDTO? todoToRemove = null;
     private Modal modal = new();
 
     protected override async Task OnInitializedAsync()
@@ -63,7 +64,7 @@ else
     {
         if (!string.IsNullOrWhiteSpace(newTodo))
         {
-            TodoItem createdTodo = await TodoService.CreateTodo(newTodo);
+            TodoItemDTO createdTodo = await TodoService.CreateTodo(newTodo);
             todoList.Add(createdTodo);
             newTodo = string.Empty;
             StateHasChanged();
@@ -81,12 +82,12 @@ else
         StateHasChanged();
     }
 
-    private async Task UpdateTodo(TodoItem todoItem)
+    private async Task UpdateTodo(TodoItemDTO todoItem)
     {
         await TodoService.UpdateTodo(todoItem);
     }
 
-    private async Task ShowModal(TodoItem todoItem)
+    private async Task ShowModal(TodoItemDTO todoItem)
     {
         todoToRemove = todoItem;
         await modal.ShowAsync();

@@ -1,4 +1,4 @@
-﻿using ToDoList.Models;
+﻿using Gen.TodoApi;
 
 namespace ToDoList.Services
 {
@@ -6,9 +6,9 @@ namespace ToDoList.Services
     {
         private readonly string _base_url = "https://localhost:7135/api/TodoItems";
 
-        public async Task<List<TodoItem>> GetAllTodos()
+        public async Task<List<TodoItemDTO>> GetAllTodos()
         {
-            List<TodoItem>? todoList = await client.GetFromJsonAsync<List<TodoItem>>(_base_url);
+            List<TodoItemDTO>? todoList = await client.GetFromJsonAsync<List<TodoItemDTO>>(_base_url);
 
             if (todoList != null)
             {
@@ -22,13 +22,13 @@ namespace ToDoList.Services
             }
         }
 
-        public async Task<TodoItem> CreateTodo(string newTodo)
+        public async Task<TodoItemDTO> CreateTodo(string newTodo)
         {
-            HttpResponseMessage response = await client.PostAsJsonAsync(_base_url, new TodoItem { Name = newTodo });
+            HttpResponseMessage response = await client.PostAsJsonAsync(_base_url, new TodoItemDTO { Name = newTodo });
 
             response.EnsureSuccessStatusCode();
 
-            TodoItem? todoItem = await response.Content.ReadFromJsonAsync<TodoItem>();
+            TodoItemDTO? todoItem = await response.Content.ReadFromJsonAsync<TodoItemDTO>();
 
             if (todoItem != null)
             {
@@ -48,7 +48,7 @@ namespace ToDoList.Services
             Console.WriteLine($"Deleted TodoItem with id={id}");
         }
 
-        public async Task UpdateTodo(TodoItem todoItem)
+        public async Task UpdateTodo(TodoItemDTO todoItem)
         {
             var svar = await client.PutAsJsonAsync(_base_url + "/" + todoItem.Id, todoItem);
             svar.EnsureSuccessStatusCode();

@@ -7,11 +7,27 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Remove="Components\Pages\Component.razor" />
+		<PackageReference Include="Blazor.Bootstrap" Version="2.2.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="NSwag.MSBuild" Version="14.0.7">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="Blazor.Bootstrap" Version="2.2.1" />
-	</ItemGroup>
+	<Target Name="RemoveGenerated" AfterTargets="AfterClean">
+		<RemoveDir Directories="Models/Gen" />
+	</Target>
+
+	<Target Name="NSwagGenerate" BeforeTargets="BeforeCompile">
+		<PropertyGroup>
+			<ApiServiceName>TodoApi</ApiServiceName>
+			<OpenApiSpecLocation>https://github.com/Palex4516/test_openapi/raw/main/TodoApi_openapi.json</OpenApiSpecLocation>
+		</PropertyGroup>
+		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=$(ApiServiceName),OpenApiSpecLocation=$(OpenApiSpecLocation)" />
+		<ItemGroup>
+			<Compile Include="Models/Gen/**/*.cs" />
+		</ItemGroup>
+	</Target>
 
 </Project>
