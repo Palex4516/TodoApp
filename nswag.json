@@ -2,7 +2,7 @@
   "runtime": "Net80",
   "documentGenerator": {
     "fromDocument": {
-      "url": "https://github.com/Palex4516/test_openapi/raw/$(ApiVersion)/$(ApiServiceName)_openapi.json",
+      "url": "https://github.com/Palex4516/$(ApiServiceName)/raw/$(ApiVersion)/openapi.json",
       "newLineBehavior": "Auto"
     }
   },

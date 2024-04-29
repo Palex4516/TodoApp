@@ -28,7 +28,7 @@
 
 	<Target Name="NSwagGenerate" BeforeTargets="BeforeCompile">
 		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=$(TodoApiName),ApiVersion=$(TodoApiVersion)" />
-		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=$(OtherApiName),ApiVersion=$(OtherApiVersion)" />
+		<!--<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=$(OtherApiName),ApiVersion=$(OtherApiVersion)" />-->
 		<ItemGroup>
 			<Compile Include="Models/Gen/**/*.cs" />
 		</ItemGroup>
