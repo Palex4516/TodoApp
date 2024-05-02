@@ -2,9 +2,9 @@
 
 namespace ToDoList.Services
 {
-    public class TodoService(HttpClient client)
+    public class TodoService(HttpClient client, IConfiguration configuration)
     {
-        private readonly string _base_url = "https://localhost:7135/api/TodoItems";
+        private readonly string _base_url = configuration["Urls:TodoApi"] + "/api/TodoItems";
 
         public async Task<List<TodoItemDTO>> GetAllTodos()
         {
