@@ -5,7 +5,7 @@ WORKDIR /source
 # copy everything else and build app
 COPY . ./TodoApp
 WORKDIR /source/TodoApp
-RUN dotnet restore
+RUN dotnet build
 RUN dotnet publish *.csproj -c release -o /app --no-restore
 
 # final stage/image
