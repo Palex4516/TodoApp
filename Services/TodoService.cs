@@ -1,4 +1,4 @@
-﻿using Gen.todo_api;
+﻿using Gen.TodoApi;
 
 namespace ToDoList.Services
 {
