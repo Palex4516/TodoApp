@@ -12,7 +12,7 @@
         {
             <li>
                 <input @bind="todo.Name" />
-                <input type="checkbox" @bind="todo.IsComplete" />
+                <input type="checkbox" @bind="todo.Done" />
                 <button @onclick="() => UpdateTodo(todo)">Save</button>
                 <button @onclick="() => ShowModal(todo)">Remove</button>
             </li>

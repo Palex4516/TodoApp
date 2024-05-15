@@ -22,7 +22,7 @@
 
 	<PropertyGroup>
 		<TodoApiName>TodoApi</TodoApiName>
-		<TodoApiVersion>1.0.16</TodoApiVersion>
+		<TodoApiVersion>1.0.21</TodoApiVersion>
 		<OtherApiName>OtherApi</OtherApiName>
 		<OtherApiVersion>main</OtherApiVersion>
 	</PropertyGroup>
