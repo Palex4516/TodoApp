@@ -20,16 +20,9 @@
 		<RemoveDir Directories="Models/Gen" />
 	</Target>
 
-	<PropertyGroup>
-		<TodoApiName>TodoApi</TodoApiName>
-		<TodoApiVersion>1.0.21</TodoApiVersion>
-		<OtherApiName>OtherApi</OtherApiName>
-		<OtherApiVersion>main</OtherApiVersion>
-	</PropertyGroup>
-
 	<Target Name="NSwagGenerate" BeforeTargets="BeforeCompile">
-		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=$(TodoApiName),ApiVersion=$(TodoApiVersion)" />
-		<!--<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=$(OtherApiName),ApiVersion=$(OtherApiVersion)" />-->
+		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=TodoApi,Url=https://raw.githubusercontent.com/Palex4516/TodoApi/main/openapi.json" />
+		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=TodoApiJava,Url=https://raw.githubusercontent.com/Palex4516/TodoApiJava/master/openapi/openapi.json" />
 		<ItemGroup>
 			<Compile Include="Models/Gen/**/*.cs" />
 		</ItemGroup>

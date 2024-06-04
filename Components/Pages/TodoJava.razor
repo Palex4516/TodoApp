@@ -1,0 +1,101 @@
+﻿@page "/todoJava"
+@using Gen.TodoApiJava
+@inject TodoJavaService TodoJavaService
+@rendermode InteractiveServer
+
+<h1>Todo List Java</h1>
+
+@if (todoList.Count > 0)
+{
+    <ul>
+        @foreach (var todo in todoList)
+        {
+            <li>
+                <input @bind="todo.Name" />
+                <input type="checkbox" @bind="todo.Done" />
+                <button @onclick="() => UpdateTodo(todo)">Save</button>
+                <button @onclick="() => ShowModal(todo)">Remove</button>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <h4>Inga todos hittades</h4>
+}
+
+<button @onclick="RefreshTodoList">Refresh</button>
+<input @bind="newTodo" />
+<button @onclick="AddTodo">Add todo</button>
+
+<Modal @ref="modal" Title="You sure you want to delete?">
+    <BodyTemplate>
+        <p>
+            You sure you want to delete "@todoToRemove!.Name"?
+            <br />
+            This action can not be undone.
+        </p>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="() => HideModal()">Close</Button>
+        <Button Color="ButtonColor.Danger" @onclick="() => RemoveTodo()">Delete</Button>
+    </FooterTemplate>
+</Modal>
+
+
+@code {
+    private List<TodoItemJava> todoList = [];
+    private string newTodo = "";
+    private TodoItemJava? todoToRemove = null;
+    private Modal modal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshTodoList();
+    }
+
+    private async Task RefreshTodoList()
+    {
+        todoList = await TodoJavaService.GetAllTodos();
+        Console.WriteLine($"todoList.Count = {todoList.Count}");
+    }
+
+    private async Task AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            TodoItemJava createdTodo = await TodoJavaService.CreateTodo(newTodo);
+            todoList.Add(createdTodo);
+            newTodo = string.Empty;
+            StateHasChanged();
+        }
+    }
+
+    private async Task RemoveTodo()
+    {
+        if (todoToRemove != null)
+        {
+            await TodoJavaService.DeleteTodo(todoToRemove.Id);
+            todoList.RemoveAll(todo => todo.Id == todoToRemove.Id);
+        }
+        await HideModal();
+        StateHasChanged();
+    }
+
+    private async Task UpdateTodo(TodoItemJava todoItem)
+    {
+        await TodoJavaService.UpdateTodo(todoItem);
+    }
+
+    private async Task ShowModal(TodoItemJava todoItem)
+    {
+        todoToRemove = todoItem;
+        await modal.ShowAsync();
+    }
+
+    private async Task HideModal()
+    {
+        await modal.HideAsync();
+        todoToRemove = null;
+    }
+}

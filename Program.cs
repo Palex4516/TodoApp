@@ -8,6 +8,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<TodoService>();
+builder.Services.AddSingleton<TodoJavaService>();
 builder.Services.AddBlazorBootstrap();
 
 var app = builder.Build();
