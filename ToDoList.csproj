@@ -22,7 +22,7 @@
 
 	<Target Name="NSwagGenerate" BeforeTargets="BeforeCompile">
 		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=TodoApi,Url=https://raw.githubusercontent.com/Palex4516/TodoApi/main/openapi.json" />
-		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=TodoApiJava,Url=https://raw.githubusercontent.com/Palex4516/TodoApiJava/master/openapi/openapi.json" />
+		<Exec Command="$(NSwagExe_Net80) run nswag.json /variables:ApiServiceName=TodoApiJava,Url=https://raw.githubusercontent.com/Palex4516/TodoApiJava/main/openapi/openapi.json" />
 		<ItemGroup>
 			<Compile Include="Models/Gen/**/*.cs" />
 		</ItemGroup>
